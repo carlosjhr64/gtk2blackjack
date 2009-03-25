@@ -1,0 +1,3 @@
+module Configuration
+  ## Stuff ##
+end

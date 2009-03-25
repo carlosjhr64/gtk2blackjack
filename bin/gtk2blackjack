@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'lib/gtk2_app'
+
+about = {
+	:authors	=> ['carlosjhr64@gmail.com'],
+	:comments	=> 'Ruby-Gnome BlackJack',
+	:website	=> 'http://ruby-gnome-apps.blogspot.com/search/label/BlackJack',
+	:website_label	=> 'Ruby-Gnome BlackJack',
+	:license	=> 'GPL',
+	:copyright	=> '2009-Mar-22',
+	}
+
+Gtk2App.instance(__FILE__, 'Ruby-Gnome BlackJack', about){|window|
+  vbox = Gtk::VBox.new
+  window.add( Gtk2App::ScrolledWindow.new(vbox) )
+}
