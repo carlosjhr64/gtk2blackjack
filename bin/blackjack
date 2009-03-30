@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+Dir.chdir( $0.sub(/[^\/]*$/,'..') )
+require 'lib/comm'
+require 'lib/placer'
+
+options = ''
+while ARGV[0] && ARGV[0] =~ /^-/ do
+  options += ARGV.shift
+end
+
+decks		= (ARGV[0])? ARGV.shift.to_i: 1		# Number of decks
+rest		= (ARGV[0])? ARGV.shift.to_f: 0.05	# Short perceptible rest
+
+p2s = s2p	= IO.popen("ruby ./bin/bjserver #{decks}",'w+')
+
+label		= (decks > 1)? "#{decks} Decks BlackJack!": "Single Deck BlackJack!"
+canvas		= './bin/gtk2fixed_client'
+p2c = c2p	= IO.popen("#{canvas} '#{label}' gifs 640 350 darkgreen",'w+') # TODO options???
+comm		= Comm.new( c2p, p2c )
+
+places = Places.new
+Placer.new( decks, comm, places, rest).run(s2p,p2s) 

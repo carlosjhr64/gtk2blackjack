@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'lib/bjserver'
+decks = (ARGV[0])? ARGV.shift.to_i: 1	# 1 Deck Default
+BJServer.new( decks, $stdin, $stdout ).run

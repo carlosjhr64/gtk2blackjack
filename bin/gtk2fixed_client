@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'lib/gtk2_app'
+require 'lib/gtk2_app_fixed'
+
+about = {
+	:authors	=> ['carlosjhr64@gmail.com'],
+	:comments	=> 'What?',
+	:website	=> 'http://ruby-gnome-apps.blogspot.com/search/label/BlackJack',
+	:website_label	=> 'Gtk2 Fixed Client',
+	:license	=> 'GPL',
+	:copyright	=> '2009-Mar-22',
+	}
+
+Gtk2App.instance(__FILE__, ARGV.shift, about) do |window|
+  fixed = Gtk2App::Fixed.new(Configuration::CANVAS_IMAGE_DIRECTORY, Configuration::CANVAS_IMAGE_PATTERN)
+  fixed.font = Configuration::FONT[:small]
+  window.modify_bg(Gtk::STATE_NORMAL, Configuration::COLOR[:bg])
+  th = Thread.new{ fixed.pipe_client }
+  window.signal_connect('destroy'){ th.kill; $stdout.puts 'q'; $stdout.flush }
+  window.add(fixed)  
+end
