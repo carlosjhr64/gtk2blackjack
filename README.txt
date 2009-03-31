@@ -34,3 +34,12 @@ D   => The adjusted ten count
 P   => A complicated but inaccurate probablity of winning :)
 C   => Plus/Minus count
 Finally, what the basic strategy says to do.
+
+A possible problem...
+Ruby-Gnome BlackJack uses three pipe communicating ruby processes.
+If you have multiple ruby versions, one of processes may be running the wrong ruby.
+To fix that, set all system ruby calls in /<path to>/gems/gtk2blackjack-0.0.0/bin/gtk2blackjack to the correct ruby.
+For example:
+"/usr/bin/ruby ./bin/bjserver #{decks}" instead of "/usr/bin/env ruby ./bin/bjserver #{decks}"
+and
+"/usr/bin/ruby ./bin/gtk2fixed_client" instead of "/usr/bin/env ruby ./bin/gtk2fixed_client"
