@@ -183,7 +183,7 @@ class Placer
   include Constants
   def send( command=nil )
     ret = @comm.send( command ).strip.split(/\s+/).last
-$stderr.puts "C:#{command}" if ret == '!'
+    # $stderr.puts "C:#{command}" if ret == '!' # for testing
     raise QUIT if ret == QUIT
     return ret
   end
