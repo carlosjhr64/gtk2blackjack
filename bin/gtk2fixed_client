@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 gem 'gtk2applib', '~> 1.0.0'
-require 'gtk2blackjack/gtk2_app'
-require 'gtk2blackjack/gtk2_app_fixed'
+require 'gtk2applib/gtk2_app'
+require 'gtk2applib/gtk2_app_fixed'
 
 about = {
 	:authors	=> ['carlosjhr64@gmail.com'],
