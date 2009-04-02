@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 require 'thread'
-require 'lib/constants.rb'
-require 'lib/tables.rb'
+require 'gtk2blackjack/constants.rb'
+require 'gtk2blackjack/tables.rb'
 
 COUNTS = 'c'
 

@@ -1,8 +1,8 @@
-require 'lib/deck'
-require 'lib/hand'
-require 'lib/player'
-require 'lib/constants'
-require 'lib/tables'
+require 'gtk2blackjack/deck'
+require 'gtk2blackjack/hand'
+require 'gtk2blackjack/player'
+require 'gtk2blackjack/constants'
+require 'gtk2blackjack/tables'
 
 class BJServer
   include Constants
