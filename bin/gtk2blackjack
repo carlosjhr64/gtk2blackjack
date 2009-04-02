@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 Dir.chdir( File.dirname(__FILE__).sub(/[\/\\]bin/,'') ) 
-require 'lib/comm'
-require 'lib/placer'
+require 'gtk2blackjack/comm'
+require 'gtk2blackjack/placer'
 
 decks = 1
 p2s = s2p = IO.popen("/usr/bin/env ruby ./bin/bjserver #{decks}",'w+')
