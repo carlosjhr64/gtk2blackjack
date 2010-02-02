@@ -1,24 +1,28 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-gem 'gtk2applib', '~> 1.0.0'
+gem 'gtk2applib', '~> 4.5.1'
 require 'gtk2applib/gtk2_app'
-require 'gtk2applib/gtk2_app_fixed'
+
+Gtk2App.init( {
+        :name           => 'Ruby-Gnome BlackJack',
+        :tooltip        => 'BlackJack',
+        :FILE           => __FILE__,
+        } )
 
 about = {
 	:authors	=> ['carlosjhr64@gmail.com'],
-	:comments	=> 'The Game Of Twenty-One',
 	:website	=> 'http://ruby-gnome-apps.blogspot.com/search/label/BlackJack',
 	:website_label	=> 'Ruby-Gnome BlackJack',
 	:license	=> 'GPL',
-	:copyright	=> '2009-Mar-31',
+	:copyright	=> '2010-02-02 15:24:30',
 	}
 
-# Set the full screen option to false
-Gtk2App.instance(__FILE__, 'Ruby-Gnome BlackJack', about, false) do |window|
-  fixed = Gtk2App::Fixed.new(Configuration::CANVAS_IMAGE_DIRECTORY, Configuration::CANVAS_IMAGE_PATTERN)
-  fixed.font = Configuration::FONT[:small]
-  window.modify_bg(Gtk::STATE_NORMAL, Configuration::COLOR[:bg])
+Gtk2App.main_window(about) do |window|
+  fixed = Gtk2App::Fixed.new(Configuration::CANVAS_IMAGE_DIRECTORY)
+  window.modify_bg(Gtk::STATE_NORMAL, Configuration::BACKGROUND_COLOR)
   th = Thread.new{ fixed.pipe_client }
   window.signal_connect('destroy'){ th.kill; $stdout.puts 'q'; $stdout.flush }
   window.add(fixed)  
 end
+
+Gtk2App.finalize
