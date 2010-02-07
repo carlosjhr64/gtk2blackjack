@@ -18,7 +18,7 @@ about = {
 	}
 
 Gtk2App.main_window(about) do |window|
-  fixed = Gtk2App::Fixed.new(Configuration::CANVAS_IMAGE_DIRECTORY)
+  fixed = Gtk2App::Fixed.new(Configuration::CANVAS_IMAGE_DIRECTORY, nil, Configuration::OPTIONS)
   window.modify_bg(Gtk::STATE_NORMAL, Configuration::BACKGROUND_COLOR)
   th = Thread.new{ fixed.pipe_client }
   window.signal_connect('destroy'){ th.kill; $stdout.puts 'q'; $stdout.flush }
