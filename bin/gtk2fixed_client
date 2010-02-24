@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-gem 'gtk2applib', '~> 4.5.1'
+gem 'gtk2applib', '~> 5.0.0'
 require 'gtk2applib/gtk2_app'
 
 Gtk2App.init( {
@@ -14,7 +14,7 @@ about = {
 	:website	=> 'http://ruby-gnome-apps.blogspot.com/search/label/BlackJack',
 	:website_label	=> 'Ruby-Gnome BlackJack',
 	:license	=> 'GPL',
-	:copyright	=> '2010-02-02 15:24:30',
+	:copyright	=> '2010-02-24 06:15:15',
 	}
 
 Gtk2App.main_window(about) do |window|
