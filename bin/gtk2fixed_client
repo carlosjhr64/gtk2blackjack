@@ -14,7 +14,7 @@ about = {
 	:website	=> 'http://ruby-gnome-apps.blogspot.com/search/label/BlackJack',
 	:website_label	=> 'Ruby-Gnome BlackJack',
 	:license	=> 'GPL',
-	:copyright	=> '2010-02-24 06:15:15',
+	:copyright	=> '2010-02-24 10:31:28',
 	}
 
 Gtk2App.main_window(about) do |window|
