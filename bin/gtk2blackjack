@@ -3,10 +3,11 @@ Dir.chdir( File.dirname(__FILE__).sub(/[\/\\]bin/,'') )
 require 'gtk2blackjack/comm'
 require 'gtk2blackjack/placer'
 
-decks = 1
-p2s = s2p = IO.popen("/usr/bin/env ruby ./bin/bjserver #{decks}",'w+')
 
-p2c = c2p = IO.popen("/usr/bin/env ruby ./bin/gtk2fixed_client",'w+')
+decks = 1
+p2s = s2p = IO.popen("/usr/bin/env ruby -I ./lib ./bin/bjserver #{decks}",'w+')
+
+p2c = c2p = IO.popen("/usr/bin/env ruby -I ./lib ./bin/gtk2fixed_client",'w+')
 
 comm = Comm.new( c2p, p2c )
 

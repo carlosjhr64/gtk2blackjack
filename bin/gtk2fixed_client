@@ -1,13 +1,15 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-gem 'gtk2applib', '~> 5.0.0'
-require 'gtk2applib/gtk2_app'
+gem 'gtk2applib', '~> 7'
+require 'gtk2applib'
 
-Gtk2App.init( {
+program = Gtk2AppLib::Program.new( {
         :name           => 'Ruby-Gnome BlackJack',
         :tooltip        => 'BlackJack',
-        :FILE           => __FILE__,
-        } )
+	:icon_name	=> 'Icon Test',
+	:FILE		=> __FILE__,
+	:lock		=> "Proceed anyways?",
+	} )
 
 about = {
 	:authors	=> ['carlosjhr64@gmail.com'],
@@ -17,12 +19,12 @@ about = {
 	:copyright	=> '2010-02-24 10:31:28',
 	}
 
-Gtk2App.main_window(about) do |window|
-  fixed = Gtk2App::Fixed.new(Configuration::CANVAS_IMAGE_DIRECTORY, nil, Configuration::OPTIONS)
+program.window(about) do |window|
+  include Gtk2AppLib
   window.modify_bg(Gtk::STATE_NORMAL, Configuration::BACKGROUND_COLOR)
+  fixed = FixedInterpreter.new(window, Configuration::OPTIONS)
   th = Thread.new{ fixed.pipe_client }
   window.signal_connect('destroy'){ th.kill; $stdout.puts 'q'; $stdout.flush }
-  window.add(fixed)  
 end
 
-Gtk2App.finalize
+program.finalize
