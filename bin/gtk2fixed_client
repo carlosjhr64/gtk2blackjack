@@ -1,26 +1,29 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-gem 'gtk2applib', '~> 8'
+gem 'gtk2applib', '~> 10'
 require 'gtk2applib'
+include Gtk2AppLib
 
 program = nil
 begin
-  program = Gtk2AppLib::Program.new({
-	'name'		=> 'Ruby-Gnome BlackJack',
-	'authors'	=> ['carlosjhr64@gmail.com'],
-	'website'	=> 'http://ruby-gnome-apps.blogspot.com/search/label/BlackJack',
-	'website_label'	=> 'Ruby-Gnome BlackJack',
-	'license'	=> 'GPL',
-	'copyright'	=> '2010-08-24 18:58:28',
+  program = Program.new({
+	:name		=> 'Ruby-Gnome BlackJack',
+	:authors	=> ['carlosjhr64@gmail.com'],
+	:website	=> 'http://ruby-gnome-apps.blogspot.com/search/label/BlackJack',
+	:website_label	=> 'Ruby-Gnome BlackJack',
+	:license	=> 'GPL',
+	:copyright	=> '2010-12-13 10:23:36',
 	})
 
   program.window do |window|
-    include Gtk2AppLib
     window.modify_bg(Gtk::STATE_NORMAL, Configuration::BACKGROUND_COLOR)
     fixed = Widgets::FixedInterpreter.new(window, Configuration::OPTIONS)
     th = Thread.new{ fixed.pipe_client }
     window.signal_connect('destroy'){ th.kill }
+    window.show_all
   end
+rescue Exception
+  $!.puts_bang!
 ensure
   program.finalize if program
   $stdout.puts 'q'
