@@ -2,6 +2,22 @@ class Hand
   attr_accessor :bet, :insured
   attr_reader :blackjack, :soft, :aces, :splitable, :next
 
+  def clear
+    @bj_value = 0
+    @aces = false
+    @soft = false
+    @bet = 0
+    @blackjack = false
+    @insured = false
+    @splitable = false
+    @n = 0
+    @next = nil
+  end
+
+  def initialize()
+    self.clear
+  end
+
   def store
     @s1 = @bj_value
     @s2 = @aces
@@ -25,22 +41,6 @@ class Hand
     @n		= @s8
     @next	= @s9
     @s1 = @s2 = @s3 = @s4 = @s5 = @s6 = @s7 = @s8 = @s9 = nil
-  end
-
-  def clear
-    @bj_value = 0
-    @aces = false
-    @soft = false
-    @bet = 0
-    @blackjack = false
-    @insured = false
-    @splitable = false
-    @n = 0
-    @next = nil
-  end
-
-  def initialize()
-    self.clear
   end
 
   def hits(card)
