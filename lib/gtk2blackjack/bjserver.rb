@@ -7,8 +7,22 @@ require 'gtk2blackjack/tables'
 class BJServer
   include Constants
 
-  def round(x)
-    return( (x * 100.0 + 0.5).to_i / 100.0 )
+  def initialize(decks,input=$stdin,output=$stdout)
+    @deck = Deck.new(decks)
+    @input = input
+    @output = output
+    @players = []
+    0.upto(7) { |n|
+      player = Player.new
+      player.name = n.to_s # 0,1,2,3...
+      player.hands = Hand.new
+      player.bank = 0.0
+      @players.push(player)
+    }
+    @dealer = @players.shift
+
+    @trials = false
+    @first_choice = nil
   end
 
   def notify(command)
@@ -23,19 +37,12 @@ class BJServer
     return response
   end
 
-  def initialize(decks,input=$stdin,output=$stdout)
-    @deck = Deck.new(decks)
-    @input = input
-    @output = output
-    @players = []
-    0.upto(7) { |n|
-      player = Player.new
-      player.name = n.to_s # 0,1,2,3...
-      player.hands = Hand.new
-      player.bank = 0.0
-      @players.push(player)
-    }
-    @dealer = @players.shift
+  def configure
+    @dealer_hits_soft = (ask( QUERY + CONFIGURATION ) == YES) # Dealer hits soft 17?
+  end
+
+  def round(x)
+    return( (x * 100.0 + 0.5).to_i / 100.0 )
   end
 
   def stablish_bets
@@ -140,60 +147,6 @@ class BJServer
     return choice
   end
 
-  def trials(player,splitable)
-    @deck.store(@hole_card,@peaked_for_ace,@peaked_for_ten) # store the current deck
-
-    @trials = true
-    player_bank = player.bank
-    player_wins = Hash.new(0.0)
-    dealer_bank = @dealer.bank
-    dealer_wins = Hash.new(0.0)
-    index = @deck.i # bookmark the current location in the deck
-
-    now = Time.now
-    count = 0
-    while Time.now - now < 3.0  do
-      count += 1
-      @hole_card = @deck.shuffle(index) # shuffle remaining cards
-      [STAND,DOUBLE,HIT,SPLIT].each { |first_choice|
-        next if first_choice == SPLIT && !splitable
-        @players.each{|p| p.store}
-        @dealer.store
-        actives = @actives
-        trigger = false
-        @players.each { |player2|
-          if trigger  then
-            player_choices(player2)
-          elsif player2 == player then
-            trigger = true
-            @first_choice = first_choice
-            player_choices(player2)
-          end
-        }
-        dealer_reveals
-        dealer_hits if @actives > 0
-        settlements
-        player_wins[first_choice] += player.bank - player_bank
-        dealer_wins[first_choice] += @dealer.bank - dealer_bank
-        @players.each{|p| p.restore}
-        @dealer.restore
-        @actives = actives
-        @deck.i = index # go back to the point in the deck where the trial started
-      }
-    end
-
-    @trials = false; pw = player_wins[STAND]; dw = dealer_wins[STAND]; pc = STAND; dc = STAND
-    [STAND,DOUBLE,HIT,SPLIT].each{|first_choice|
-      next if first_choice == SPLIT && !splitable
-      notify( ALERT + TRIALS + "#{first_choice} #{round(player_wins[first_choice]/count.to_f)} #{round(dealer_wins[first_choice]/count.to_f)}")
-      ((pc = first_choice) && (pw = player_wins[first_choice]))	if player_wins[first_choice] > pw
-      ((dc = first_choice) && (dw = dealer_wins[first_choice]))	if dealer_wins[first_choice] < dw
-    }
-    notify( ALERT + TRIALS + "N #{count} #{pc}/#{dc}")
-
-    @hole_card = @deck.restore # restore deck to that before trials.
-  end
-
   def player_choices(player)
     hands = player.hands
     if hands.bet != 0.0 then
@@ -202,7 +155,7 @@ class BJServer
           notify( ALERT + player.name + hands.bj_value.to_s + ((hands.soft)? '*': '') )	if !@trials
           while choice = choice_is(player.name,hands) do
             if choice == TRIALS then
-              trials(player,hands.splitable)
+              self.trials(player,hands.splitable)
             else
               break if choice == STAND
               if choice == SPLIT && hands.splitable then # second part for tainted safety / sanity check
@@ -302,8 +255,58 @@ class BJServer
     notify( SETTLE + DEALER + "#{dealer_win} #{@dealer.bank}" )	if !@trials
   end
 
-  def configure
-    @dealer_hits_soft = (ask( QUERY + CONFIGURATION ) == YES) # Dealer hits soft 17?
+  def trials(player,splitable)
+    @deck.store(@hole_card,@peaked_for_ace,@peaked_for_ten) # store the current deck
+
+    @trials = true
+    player_bank = player.bank
+    player_wins = Hash.new(0.0)
+    dealer_bank = @dealer.bank
+    dealer_wins = Hash.new(0.0)
+    index = @deck.i # bookmark the current location in the deck
+
+    now = Time.now
+    count = 0
+    while Time.now - now < 3.0  do
+      count += 1
+      @hole_card = @deck.shuffle(index) # shuffle remaining cards
+      [STAND,DOUBLE,HIT,SPLIT].each { |first_choice|
+        next if first_choice == SPLIT && !splitable
+        @players.each{|p| p.store}
+        @dealer.store
+        actives = @actives
+        trigger = false
+        @players.each { |player2|
+          if trigger  then
+            player_choices(player2)
+          elsif player2 == player then
+            trigger = true
+            @first_choice = first_choice
+            player_choices(player2)
+          end
+        }
+        dealer_reveals
+        dealer_hits if @actives > 0
+        settlements
+        player_wins[first_choice] += player.bank - player_bank
+        dealer_wins[first_choice] += @dealer.bank - dealer_bank
+        @players.each{|p| p.restore}
+        @dealer.restore
+        @actives = actives
+        @deck.i = index # go back to the point in the deck where the trial started
+      }
+    end
+
+    @trials = false; pw = player_wins[STAND]; dw = dealer_wins[STAND]; pc = STAND; dc = STAND
+    [STAND,DOUBLE,HIT,SPLIT].each{|first_choice|
+      next if first_choice == SPLIT && !splitable
+      notify( ALERT + TRIALS + "#{first_choice} #{round(player_wins[first_choice]/count.to_f)} #{round(dealer_wins[first_choice]/count.to_f)}")
+      ((pc = first_choice) && (pw = player_wins[first_choice]))	if player_wins[first_choice] > pw
+      ((dc = first_choice) && (dw = dealer_wins[first_choice]))	if dealer_wins[first_choice] < dw
+    }
+    notify( ALERT + TRIALS + "N #{count} #{pc}/#{dc}")
+
+    @hole_card = @deck.restore # restore deck to that before trials.
   end
 
   def run

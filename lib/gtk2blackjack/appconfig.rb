@@ -1,6 +1,7 @@
 module Gtk2AppLib
 module Configuration
   MENU[:fs] = '_Fullscreen' if HILDON
+  MENU[:help] = '_Help'
 end
 end
 
