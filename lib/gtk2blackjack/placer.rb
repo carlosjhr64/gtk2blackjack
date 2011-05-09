@@ -181,6 +181,21 @@ end
 
 class Placer
   include Constants
+
+  def initialize( decks, comm, places, rest )
+    @comm	= comm
+    @places	= places
+    @rest	= rest
+
+    @counter	= Counts.new(decks)
+    @skip_to	= nil
+    @same_as	= nil
+    @players	= []
+
+    @ps = @pv = @dv = nil # defined later
+    # this hints on a break up of Placer
+  end
+
   def send( command=nil )
     ret = @comm.send( command ).strip.split(/\s+/).last
     # $stderr.puts "C:#{command}" if ret == '!' # for testing
@@ -382,17 +397,6 @@ class Placer
     end
   end
 
-
-  def initialize( decks, comm, places, rest )
-    @comm	= comm
-    @places	= places
-    @rest	= rest
-
-    @counter	= Counts.new(decks)
-    @skip_to	= nil
-    @same_as	= nil
-    @players	= []
-  end
 
   def run(s2p,p2s)
     begin

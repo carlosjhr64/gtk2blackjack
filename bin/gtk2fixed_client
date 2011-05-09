@@ -11,7 +11,7 @@ begin
 	'website'	=> 'https://sites.google.com/site/gtk2applib/home/gtk2applib-applications/gtk2blackjack',
 	'website_label'	=> 'Ruby-Gnome BlackJack',
 	'license'	=> 'GPL',
-	'copyright'	=> '2011-03-15 07:52:05',
+	'copyright'	=> '2011-05-09 08:19:58',
 	})
 
   program.window do |window|
